@@ -1,149 +1,150 @@
 import { useState, useEffect } from "react";
-import TaskDetail from "../components/TaskDetail";  // 引入弹窗组件
+import TaskDetail from "../components/TaskDetail";
 
 function Dashboard() {
-  const [tasks, setTasks] = useState([]);
-  const [editTaskId, setEditTaskId] = useState(null);
-  const [editTaskTitle, setEditTaskTitle] = useState("");
-  const [selectedTask, setSelectedTask] = useState(null); // 控制弹窗
+  const [teams, setTeams] = useState([]);
+  const [expandedTeamId, setExpandedTeamId] = useState(null);
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [newTeamName, setNewTeamName] = useState("");
+  const [selectedTask, setSelectedTask] = useState(null); // {teamId, task}
 
-  // Fetch tasks from backend
-  const fetchTasks = async () => {
+  // Fetch teams and tasks
+  const fetchTeams = async () => {
     try {
-      const response = await fetch("/api/tasks/");
+      const response = await fetch("/api/teams/");
       const data = await response.json();
-      setTasks(data);
+      setTeams(data);
     } catch (err) {
-      console.error("Failed to fetch tasks:", err);
+      console.error("Failed to fetch teams:", err);
     }
   };
 
-  useEffect(() => { fetchTasks(); }, []);
+  useEffect(() => { fetchTeams(); }, []);
 
-  // Handle delete task
-  const handleDelete = async (taskId) => {
+  // Add new team
+  const handleAddTeam = async () => {
+    if (!newTeamName.trim()) return alert("Team name is required.");
     try {
-      const response = await fetch(`/api/tasks/${taskId}`, { method: "DELETE" });
-      if (response.ok) {
-        alert("Task deleted!");
-        fetchTasks();
-      } else {
-        alert("Failed to delete task.");
-      }
-    } catch (err) {
-      console.error("Delete error:", err);
-    }
-  };
-
-  // Handle inline edit
-  const handleEditStart = (task) => {
-    setEditTaskId(task.id);
-    setEditTaskTitle(task.title);
-  };
-
-  const handleEditSave = async (taskId) => {
-    try {
-      const response = await fetch(`/api/tasks/${taskId}`, {
-        method: "PUT",
+      const response = await fetch("/api/teams/", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: editTaskTitle })
+        body: JSON.stringify({ name: newTeamName })
       });
       if (response.ok) {
-        alert("Task updated!");
-        setEditTaskId(null);
-        setEditTaskTitle("");
-        fetchTasks();
+        alert("Team created!");
+        setNewTeamName("");
+        fetchTeams();
       } else {
-        alert("Failed to update task.");
+        alert("Failed to create team.");
       }
     } catch (err) {
-      console.error("Edit error:", err);
+      console.error("Add team error:", err);
     }
   };
 
-  // Handle modal save
-  const handleModalSave = async (updatedTask) => {
+  // Add task to team
+  const handleAddTask = async (teamId) => {
+    if (!newTaskTitle.trim()) return alert("Task title is required.");
     try {
-      const response = await fetch(`/api/tasks/${updatedTask.id}`, {
-        method: "PUT",
+      const response = await fetch(`/api/teams/${teamId}/tasks`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedTask)
+        body: JSON.stringify({
+          title: newTaskTitle,
+          simple_description: "Simple default description"
+        })
       });
       if (response.ok) {
-        alert("Task detail updated!");
-        setSelectedTask(null);
-        fetchTasks();
+        alert("Task added!");
+        setNewTaskTitle("");
+        fetchTeams();
       } else {
-        alert("Failed to update task.");
+        alert("Failed to add task.");
       }
     } catch (err) {
-      console.error("Modal update error:", err);
+      console.error("Add task error:", err);
     }
+  };
+
+  // Set selected task for editing (pass task and teamId)
+  const handleEditTask = (teamId, task) => {
+    setSelectedTask({ teamId, task });
   };
 
   return (
     <div style={{ maxWidth: 800, margin: "0 auto", padding: 20 }}>
-      <h2>Dashboard (Task List)</h2>
+      <h2>Teams and Tasks</h2>
 
-      {tasks.length === 0 && <p>No tasks available.</p>}
-
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
-        {tasks.map((task) => (
-          <div
-            key={task.id}
-            style={{
-              width: "calc(50% - 20px)",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-              padding: "16px",
-              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-              position: "relative",
-              backgroundColor: "#fff"
-            }}
-          >
-            {editTaskId === task.id ? (
-              <>
-                <input
-                  type="text"
-                  value={editTaskTitle}
-                  onChange={(e) => setEditTaskTitle(e.target.value)}
-                  style={{ width: "100%", marginBottom: 10 }}
-                />
-                <button onClick={() => handleEditSave(task.id)}>Save</button>
-                <button onClick={() => setEditTaskId(null)} style={{ marginLeft: 5 }}>Cancel</button>
-              </>
-            ) : (
-              <>
-                {/* Clickable area for opening modal */}
-                <div
-                  onClick={() => {
-                    console.log("Clicked Task:", task); // ✅ 应该打印任务数据
-                    setSelectedTask(task);
-                  }}
-                  style={{ cursor: "pointer" }}
-                >
-                  <h3>{task.title}</h3>
-                  <p>{task.description || "No description"}</p>
-                </div>
-
-
-                {/* Edit & Delete buttons */}
-                <div style={{ marginTop: 10 }}>
-                  <button onClick={() => handleEditStart(task)} style={{ marginRight: 5 }}>Edit</button>
-                  <button onClick={() => handleDelete(task.id)}>Delete</button>
-                </div>
-              </>
-            )}
-          </div>
-        ))}
+      {/* Add Team */}
+      <div style={{ marginBottom: 20 }}>
+        <input
+          type="text"
+          placeholder="New Team Name"
+          value={newTeamName}
+          onChange={(e) => setNewTeamName(e.target.value)}
+          style={{ marginRight: 10 }}
+        />
+        <button onClick={handleAddTeam}>Add Team</button>
       </div>
 
-      {/* Modal (Task Detail) */}
+      {/* Team List */}
+      {teams.map((team) => (
+        <div key={team._id} style={{ border: "1px solid #ccc", borderRadius: 8, padding: 16, marginBottom: 16 }}>
+          <h3 onClick={() => setExpandedTeamId(expandedTeamId === team._id ? null : team._id)} style={{ cursor: "pointer" }}>
+            {team.name} {expandedTeamId === team._id ? "▲" : "▼"}
+          </h3>
+
+          {expandedTeamId === team._id && (
+            <div>
+              {/* Task List */}
+              {team.tasks && team.tasks.length > 0 ? (
+                team.tasks.map((task) => (
+                  <div
+                    key={task.id}
+                    onClick={() => handleEditTask(team._id, task)} // Set task for editing
+                    style={{
+                      padding: 10,
+                      margin: "10px 0",
+                      border: "1px solid gray",
+                      borderRadius: 6,
+                      backgroundColor: "#f9f9f9",
+                      cursor: "pointer"
+                    }}
+                  >
+                    <strong>{task.title}</strong>
+                    <p>{task.simple_description || "No description"}</p>
+                  </div>
+                ))
+              ) : (
+                <p>No tasks available.</p>
+              )}
+
+              {/* Add Task Input */}
+              <div style={{ marginTop: 10 }}>
+                <input
+                  type="text"
+                  placeholder="New Task Title"
+                  value={newTaskTitle}
+                  onChange={(e) => setNewTaskTitle(e.target.value)}
+                  style={{ marginRight: 5 }}
+                />
+                <button onClick={() => handleAddTask(team._id)}>Add Task</button>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+
+      {/* Task Detail Modal */}
       {selectedTask && (
         <TaskDetail
-          task={selectedTask}
-          onClose={() => setSelectedTask(null)}
-          onSave={handleModalSave}
+          task={selectedTask.task}
+          teamId={selectedTask.teamId}
+          onClose={() => setSelectedTask(null)} // Close modal
+          onSave={() => {
+            setSelectedTask(null); 
+            fetchTeams();          
+          }} // Refresh teams after saving
         />
       )}
     </div>
