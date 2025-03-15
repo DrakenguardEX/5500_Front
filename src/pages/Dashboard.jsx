@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
-import TaskDetail from "../components/TaskDetail";  // 引入弹窗组件
+import TaskDetail from "../components/TaskDetail"; // 引入弹窗组件
+import TaskFilter from "../components/TaskFilter";
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [filters, setFilters] = useState({ searchTerm: "", priority: "all" });
+  const [sortBy, setSortBy] = useState("date");
   const [editTaskId, setEditTaskId] = useState(null);
   const [editTaskTitle, setEditTaskTitle] = useState("");
   const [selectedTask, setSelectedTask] = useState(null); // 控制弹窗
@@ -18,12 +23,20 @@ function Dashboard() {
     }
   };
 
-  useEffect(() => { fetchTasks(); }, []);
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  useEffect(() => {
+    applyFiltersAndSort(tasks, filters, sortBy);
+  }, [tasks]);
 
   // Handle delete task
   const handleDelete = async (taskId) => {
     try {
-      const response = await fetch(`/api/tasks/${taskId}`, { method: "DELETE" });
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: "DELETE",
+      });
       if (response.ok) {
         alert("Task deleted!");
         fetchTasks();
@@ -46,7 +59,7 @@ function Dashboard() {
       const response = await fetch(`/api/tasks/${taskId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: editTaskTitle })
+        body: JSON.stringify({ title: editTaskTitle }),
       });
       if (response.ok) {
         alert("Task updated!");
@@ -67,7 +80,7 @@ function Dashboard() {
       const response = await fetch(`/api/tasks/${updatedTask.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedTask)
+        body: JSON.stringify(updatedTask),
       });
       if (response.ok) {
         alert("Task detail updated!");
@@ -81,56 +94,236 @@ function Dashboard() {
     }
   };
 
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    applyFiltersAndSort(tasks, newFilters, sortBy);
+  };
+
+  const handleSortChange = (newSortBy) => {
+    setSortBy(newSortBy);
+    applyFiltersAndSort(tasks, filters, newSortBy);
+  };
+
+  const applyFiltersAndSort = (taskList, currentFilters, currentSortBy) => {
+    let result = [...taskList];
+
+    // Apply filters
+    if (currentFilters.searchTerm) {
+      result = result.filter(
+        (task) =>
+          task.title
+            .toLowerCase()
+            .includes(currentFilters.searchTerm.toLowerCase()) ||
+          task.description
+            .toLowerCase()
+            .includes(currentFilters.searchTerm.toLowerCase())
+      );
+    }
+
+    if (currentFilters.priority !== "all") {
+      result = result.filter(
+        (task) => task.priority === currentFilters.priority
+      );
+    }
+
+    // Apply sorting
+    result.sort((a, b) => {
+      switch (currentSortBy) {
+        case "date":
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        case "priority":
+          const priorityOrder = { high: 3, medium: 2, low: 1 };
+          return priorityOrder[b.priority] - priorityOrder[a.priority];
+        case "title":
+          return a.title.localeCompare(b.title);
+        default:
+          return 0;
+      }
+    });
+
+    setFilteredTasks(result);
+  };
+
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto", padding: 20 }}>
-      <h2>Dashboard (Task List)</h2>
+    <div
+      style={{
+        maxWidth: 1200,
+        margin: "0 auto",
+        padding: "40px 20px",
+        backgroundColor: "#f5f7fa",
+        minHeight: "100vh",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          // marginBottom: 30,
+        }}
+      >
+        <h2
+          style={{
+            margin: 0,
+            color: "#2c3e50",
+            fontSize: "28px",
+          }}
+        >
+          My Tasks
+        </h2>
 
-      {tasks.length === 0 && <p>No tasks available.</p>}
+        <button
+          style={{
+            backgroundColor: "#4CAF50",
+            color: "white",
+            border: "none",
+            padding: "12px 24px",
+            borderRadius: "6px",
+            fontWeight: "600",
+          }}
+        >
+          + Add New Task
+        </button>
+      </div>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+      {tasks.length === 0 && (
+        <div
+          style={{
+            textAlign: "center",
+            padding: "40px",
+            backgroundColor: "white",
+            borderRadius: "8px",
+            color: "#666",
+          }}
+        >
+          <h3>No Tasks Yet</h3>
+          <p>Create your first task to get started!</p>
+        </div>
+      )}
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+          gap: "20px",
+        }}
+      >
         {tasks.map((task) => (
           <div
             key={task.id}
             style={{
-              width: "calc(50% - 20px)",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-              padding: "16px",
-              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-              position: "relative",
-              backgroundColor: "#fff"
+              backgroundColor: "white",
+              borderRadius: "12px",
+              padding: "20px",
+              boxShadow: "0 2px 12px rgba(0, 0, 0, 0.08)",
+              transition: "transform 0.2s, box-shadow 0.2s",
+              cursor: editTaskId === task.id ? "default" : "pointer",
+              ":hover": {
+                transform: "translateY(-2px)",
+                boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+              },
             }}
           >
             {editTaskId === task.id ? (
-              <>
+              <div style={{ padding: "10px 0" }}>
                 <input
                   type="text"
                   value={editTaskTitle}
                   onChange={(e) => setEditTaskTitle(e.target.value)}
-                  style={{ width: "100%", marginBottom: 10 }}
+                  style={{
+                    width: "100%",
+                    padding: "8px 12px",
+                    borderRadius: "6px",
+                    border: "1px solid #ddd",
+                    marginBottom: "15px",
+                    fontSize: "16px",
+                  }}
                 />
-                <button onClick={() => handleEditSave(task.id)}>Save</button>
-                <button onClick={() => setEditTaskId(null)} style={{ marginLeft: 5 }}>Cancel</button>
-              </>
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <button
+                    onClick={() => handleEditSave(task.id)}
+                    style={{
+                      backgroundColor: "#4CAF50",
+                      color: "white",
+                      flex: 1,
+                    }}
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setEditTaskId(null)}
+                    style={{
+                      backgroundColor: "#f5f5f5",
+                      color: "#333",
+                      flex: 1,
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
             ) : (
               <>
-                {/* Clickable area for opening modal */}
                 <div
-                  onClick={() => {
-                    console.log("Clicked Task:", task); // ✅ 应该打印任务数据
-                    setSelectedTask(task);
-                  }}
-                  style={{ cursor: "pointer" }}
+                  onClick={() => setSelectedTask(task)}
+                  style={{ padding: "10px 0" }}
                 >
-                  <h3>{task.title}</h3>
-                  <p>{task.description || "No description"}</p>
+                  <h3
+                    style={{
+                      margin: "0 0 10px 0",
+                      color: "#2c3e50",
+                      fontSize: "18px",
+                    }}
+                  >
+                    {task.title}
+                  </h3>
+                  <p
+                    style={{
+                      margin: "0",
+                      color: "#666",
+                      fontSize: "14px",
+                      lineHeight: "1.5",
+                    }}
+                  >
+                    {task.description || "No description"}
+                  </p>
                 </div>
 
-
-                {/* Edit & Delete buttons */}
-                <div style={{ marginTop: 10 }}>
-                  <button onClick={() => handleEditStart(task)} style={{ marginRight: 5 }}>Edit</button>
-                  <button onClick={() => handleDelete(task.id)}>Delete</button>
+                <div
+                  style={{
+                    marginTop: "20px",
+                    paddingTop: "15px",
+                    borderTop: "1px solid #eee",
+                    display: "flex",
+                    gap: "10px",
+                  }}
+                >
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditStart(task);
+                    }}
+                    style={{
+                      backgroundColor: "#2196F3",
+                      color: "white",
+                      flex: 1,
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(task.id);
+                    }}
+                    style={{
+                      backgroundColor: "#FF5252",
+                      color: "white",
+                      flex: 1,
+                    }}
+                  >
+                    Delete
+                  </button>
                 </div>
               </>
             )}
@@ -138,7 +331,6 @@ function Dashboard() {
         ))}
       </div>
 
-      {/* Modal (Task Detail) */}
       {selectedTask && (
         <TaskDetail
           task={selectedTask}
