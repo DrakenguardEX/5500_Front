@@ -1,14 +1,16 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   // Handle login button click
   const handleLogin = async () => {
     try {
-      const response = await fetch("/api/login", {
+      const response = await fetch("/api/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -24,6 +26,7 @@ function Login() {
         alert("Login successful!");
         setError("");  // Clear error message
         // Redirect to another page if needed
+        navigate("/dashboard");
       } else {
         setError(data.message);  // Show error message from backend
       }
