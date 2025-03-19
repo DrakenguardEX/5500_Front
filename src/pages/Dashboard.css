@@ -1,0 +1,117 @@
+.dashboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  width: 100vw; /* 让页面铺满整个窗口 */
+  background-color: #f4f4f4;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.dashboard-container {
+  width: 95%; /* 适配不同屏幕 */
+  max-width: 1400px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.dashboard-header {
+  text-align: center; /* Centers the text */
+  width: 100%; /* Ensures it spans across the container */
+  font-size: 24px; /* Adjust size for better visibility */
+  font-weight: bold;
+  margin-bottom: 20px; /* Adds spacing below */
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 三列布局 */
+  gap: 20px;
+  width: 100%;
+  justify-content: center; /* 确保整体居中 */
+  align-items: start;
+}
+
+.team-card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  /* width: calc(33.33% - 20px);  让卡片自适应3列布局 */
+  min-width: 300px; /* 设置最小宽度，避免过窄 */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+@media (max-width: 1024px) {
+  .team-card {
+    grid-template-columns: repeat(
+      2,
+      minmax(300px, 1fr)
+    ); /* 1024px以下时变为2列 */
+  }
+}
+
+@media (max-width: 768px) {
+  .team-card {
+    grid-template-columns: repeat(1, minmax(300px, 1fr)); /* 768px以下变1列 */
+  }
+}
+
+.input-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
+}
+
+.input-field {
+  flex: 1;
+  min-width: 150px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.task-list {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(250px, 1fr)
+  ); /* Responsive grid */
+  gap: 10px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.task-item {
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+  border: 1px solid #ddd;
+}
+
+.task-item:hover {
+  background: #f1f1f1;
+  cursor: pointer;
+}

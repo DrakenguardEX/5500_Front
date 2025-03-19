@@ -1,0 +1,82 @@
+/* Center full-page container */
+.register-container {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center; /* Centers vertically */
+  height: 100vh; /* Full height of the viewport */
+  width: 100vw; /* Full width of the viewport */
+  background: #f4f4f4;
+}
+
+/* White card-like register box */
+.register-box {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  width: 350px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Register Heading */
+h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+/* Input fields */
+.input-field {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border 0.2s ease-in-out;
+}
+
+.input-field:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Register button */
+.register-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.register-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Error message */
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+/* Login link */
+.login-text {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.login-link {
+  color: #007bff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
