@@ -21,6 +21,7 @@ function Login() {
       if (response.ok) {
         console.log("Login success:", data);
         localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.user_id);
         alert("Login successful!");
         setError("");
         navigate("/dashboard");
