@@ -4,15 +4,17 @@ import "./TaskDetail.css";
 function TaskDetail({ task, teamId, onClose, onSave }) {
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description || "");
-  const [status, setStatus] = useState(task.status || "Pending");
+  const [status, setStatus] = useState(task.status || "TBD");
+  const [type, setType] = useState(task.type || "TBD");
+  const [priority, setPriority] = useState(task.priority || "TBD");
 
   // Call backend to update task
   const handleSave = async () => {
     try {
-      const response = await fetch(`/api/teams/${teamId}/tasks/${task.id}`, {
+      const response = await fetch(`/api/tasks/${task.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, description, status }),
+        body: JSON.stringify({ title, description, status, type, priority }),
       });
 
       if (response.ok) {
@@ -30,6 +32,7 @@ function TaskDetail({ task, teamId, onClose, onSave }) {
     <div className="task-detail-overlay">
       <div className="task-detail-container">
         <h3>Edit Task</h3>
+
         <label>Task Title</label>
         <input
           type="text"
@@ -49,8 +52,23 @@ function TaskDetail({ task, teamId, onClose, onSave }) {
         <label>Status</label>
         <select value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="Pending">Pending</option>
-          <option value="In Progress">In Progress</option>
+          <option value="In Progress"></option>
           <option value="Completed">Completed</option>
+        </select>
+
+        <label>Type</label>
+        <select value={type} onChange={(e) => setType(e.target.value)}>
+          <option value="Uncategorized">Uncategorized</option>
+          <option value="Daily">Daily</option>
+          <option value="Study">Study</option>
+          <option value="Work">Work</option>
+        </select>
+
+        <label>Priority</label>
+        <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
         </select>
 
         <div className="button-group">
