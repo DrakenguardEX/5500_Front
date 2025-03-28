@@ -52,7 +52,7 @@ function TaskDetail({ task, teamId, onClose, onSave }) {
         <label>Status</label>
         <select value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="Pending">Pending</option>
-          <option value="In Progress"></option>
+          <option value="In Progress">In Progress</option>
           <option value="Completed">Completed</option>
         </select>
 
