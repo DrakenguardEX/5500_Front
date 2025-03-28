@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import Login from '../Login';
 import { BrowserRouter } from 'react-router-dom';
 
-// Mock fetch 和 navigate
+
 global.fetch = vi.fn();
 const mockedNavigate = vi.fn();
 
@@ -15,7 +15,7 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-// mock window.alert，防止 jsdom 报错
+
 beforeAll(() => {
   vi.stubGlobal('alert', vi.fn());
 });
