@@ -55,6 +55,9 @@ function MyTasks() {
           >
             <strong>{task.title}</strong>
             <p>{task.description || "No description"}</p>
+            <p>Type: {task.type || "TBD"}</p>
+            <p>Status: {task.status || "TBD"}</p>
+            <p>Priority: {task.priority || "TBD"}</p>
           </div>
         ))}
 
