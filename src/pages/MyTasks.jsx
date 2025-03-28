@@ -13,6 +13,7 @@ function MyTasks() {
     try {
       const res = await fetch(`/api/tasks/user/${userId}`);
       const data = await res.json();
+      console.log("Fetched tasks:", data);
       setTasks(data);
     } catch (err) {
       console.error("Failed to fetch personal tasks:", err);
@@ -25,7 +26,7 @@ function MyTasks() {
       await fetch(`/api/tasks/user/${userId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: newTask })
+        body: JSON.stringify({ title: newTask }),
       });
       setNewTask("");
       fetchTasks();
@@ -41,6 +42,21 @@ function MyTasks() {
   useEffect(() => {
     fetchTasks();
   }, []);
+
+  // useEffect(() => {
+  //   // fetchTasks(); // Temporarily comment this out
+
+  //   setTasks([
+  //     {
+  //       id: "1",
+  //       title: "Test Task",
+  //       description: "This is just a test to see if it renders",
+  //       type: "Personal",
+  //       status: "Pending",
+  //       priority: "Medium",
+  //     },
+  //   ]);
+  // }, []);
 
   return (
     <div className="dashboard-wrapper">
