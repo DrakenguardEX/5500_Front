@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import Dashboard from '../Dashboard';
 import { BrowserRouter } from 'react-router-dom';
 
-// mock window.alert 和 localStorage
+
 beforeAll(() => {
   vi.stubGlobal('alert', vi.fn());
   vi.stubGlobal('localStorage', {
