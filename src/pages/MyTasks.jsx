@@ -43,21 +43,6 @@ function MyTasks() {
     fetchTasks();
   }, []);
 
-  // useEffect(() => {
-  //   // fetchTasks(); // Temporarily comment this out
-
-  //   setTasks([
-  //     {
-  //       id: "1",
-  //       title: "Test Task",
-  //       description: "This is just a test to see if it renders",
-  //       type: "Personal",
-  //       status: "Pending",
-  //       priority: "Medium",
-  //     },
-  //   ]);
-  // }, []);
-
   return (
     <div className="dashboard-wrapper">
       <div className="dashboard-container centered">
@@ -69,7 +54,18 @@ function MyTasks() {
             className="task-item"
             onClick={() => handleEditTask(task)}
           >
-            <strong>{task.title}</strong>
+            
+            <div className="task-header">
+              <strong>{task.title}</strong>
+              <p className="due-date">
+                Due: {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "TBD"}
+              </p>
+              <p className="cycle">
+                Cycle: {task.cycle || "TBD"}
+              </p>
+            </div>
+
+            
             <p>{task.description || "No description"}</p>
             <p>Type: {task.type || "TBD"}</p>
             <p>Status: {task.status || "TBD"}</p>
@@ -107,3 +103,4 @@ function MyTasks() {
 }
 
 export default MyTasks;
+
