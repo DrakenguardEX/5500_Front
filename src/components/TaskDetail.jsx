@@ -8,13 +8,23 @@ function TaskDetail({ task, teamId, onClose, onSave }) {
   const [type, setType] = useState(task.type || "TBD");
   const [priority, setPriority] = useState(task.priority || "TBD");
 
-  // Call backend to update task
+  const [cycle, setCycle] = useState(task.cycle || "Daily");
+  const [dueDate, setDueDate] = useState(task.dueDate || "");
+
   const handleSave = async () => {
     try {
       const response = await fetch(`/api/tasks/${task.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, description, status, type, priority }),
+        body: JSON.stringify({
+          title,
+          description,
+          status,
+          type,
+          priority,
+          cycle,
+          dueDate     
+        }),
       });
 
       if (response.ok) {
@@ -70,6 +80,22 @@ function TaskDetail({ task, teamId, onClose, onSave }) {
           <option value="Medium">Medium</option>
           <option value="Low">Low</option>
         </select>
+
+        
+        <label>Cycle</label>
+        <select value={cycle} onChange={(e) => setCycle(e.target.value)}>
+          <option value="Daily">Daily</option>
+          <option value="Weekly">Weekly</option>
+          <option value="Monthly">Monthly</option>
+        </select>
+
+        
+        <label>Due Date</label>
+        <input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+        />
 
         <div className="button-group">
           <button className="save-btn" onClick={handleSave}>
