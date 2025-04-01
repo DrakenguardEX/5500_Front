@@ -10,19 +10,17 @@ function Dashboard() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [memberToAdd, setMemberToAdd] = useState({});
 
-
   const userId = localStorage.getItem("userId");
-
 
   const fetchTeams = async () => {
     const userId = localStorage.getItem("userId");
     if (!userId) return alert("User not logged in");
-  
+
     try {
       const response = await fetch("/api/teams/", {
         headers: {
-          "X-User-Id": userId
-        }
+          "X-User-Id": userId,
+        },
       });
       const data = await response.json();
       setTeams(data);
@@ -30,7 +28,6 @@ function Dashboard() {
       console.error("Failed to fetch teams:", err);
     }
   };
-  
 
   useEffect(() => {
     fetchTeams();
@@ -38,20 +35,20 @@ function Dashboard() {
 
   const handleAddTeam = async () => {
     if (!newTeamName.trim()) return alert("Team name is required.");
-  
+
     const userId = localStorage.getItem("userId");
     if (!userId) return alert("User not logged in");
-  
+
     try {
       const response = await fetch("/api/teams/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-User-Id": userId  // ✅ 添加这个
+          "X-User-Id": userId, // ✅ 添加这个
         },
         body: JSON.stringify({ name: newTeamName }),
       });
-  
+
       if (response.ok) {
         alert("Team created!");
         setNewTeamName("");
@@ -64,23 +61,23 @@ function Dashboard() {
       console.error("Add team error:", err);
     }
   };
-  
+
   const handleAddMember = async (teamId) => {
-    const usernameToAdd = memberToAdd[teamId];  // ✅ 正确取值！
-  
+    const usernameToAdd = memberToAdd[teamId]; // ✅ 正确取值！
+
     if (!usernameToAdd) {
       return alert("Enter a username to add.");
     }
-  
+
     try {
       const response = await fetch(`/api/teams/${teamId}/members`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: usernameToAdd })  // ✅ 使用正确变量名
+        body: JSON.stringify({ username: usernameToAdd }), // ✅ 使用正确变量名
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         alert("Member added!");
         setMemberToAdd({ ...memberToAdd, [teamId]: "" });
@@ -92,7 +89,6 @@ function Dashboard() {
       console.error("Add member error:", err);
     }
   };
-  
 
   const handleAddTask = async (teamId) => {
     if (!newTaskTitle.trim()) return alert("Task title is required.");
@@ -121,15 +117,21 @@ function Dashboard() {
     setSelectedTask({ teamId, task });
   };
 
-
   return (
     <div>
       <div className="top-bar">
         <button
           className="btn btn-secondary"
-          onClick={() => window.location.href = "/my-tasks"}
+          onClick={() => (window.location.href = "/my-tasks")}
         >
           Go to My Tasks
+        </button>
+        <button
+          className="btn btn-success"
+          onClick={() => (window.location.href = "/ai-assistant")}
+          style={{ marginLeft: "10px" }}
+        >
+          AI Assistant
         </button>
       </div>
       <div className="dashboard-wrapper">
@@ -186,7 +188,10 @@ function Dashboard() {
                         placeholder="User ID to add"
                         value={memberToAdd[team._id] || ""}
                         onChange={(e) =>
-                          setMemberToAdd({ ...memberToAdd, [team._id]: e.target.value })
+                          setMemberToAdd({
+                            ...memberToAdd,
+                            [team._id]: e.target.value,
+                          })
                         }
                         className="input-field"
                       />

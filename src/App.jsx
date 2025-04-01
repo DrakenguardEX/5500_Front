@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Team from "./pages/Team";
 import MyTasks from "./pages/MyTasks";
+import AIAssistant from "./pages/AIAssistant";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/team" element={<Team />} />
         <Route path="/my-tasks" element={<MyTasks />} />
+        <Route path="/ai-assistant" element={<AIAssistant />} />
       </Routes>
     </BrowserRouter>
   );
