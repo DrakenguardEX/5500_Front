@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import TaskDetail from "../components/TaskDetail";
 import "./Dashboard.css";
+import TopBar from "../components/TopBar";
 
 function MyTasks() {
   const [tasks, setTasks] = useState([]);
@@ -44,63 +45,64 @@ function MyTasks() {
   }, []);
 
   return (
-    <div className="dashboard-wrapper">
-      <div className="dashboard-container centered">
-        <h2 className="dashboard-header">My Personal Tasks</h2>
+    <div>
+      <TopBar />
+      <div className="dashboard-wrapper">
+        <div className="dashboard-container centered">
+          <h2 className="dashboard-header">My Personal Tasks</h2>
 
-        {tasks.map((task) => (
-          <div
-            key={task.id}
-            className="task-item"
-            onClick={() => handleEditTask(task)}
-          >
-            
-            <div className="task-header">
-              <strong>{task.title}</strong>
-              <p className="due-date">
-                Due: {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "TBD"}
-              </p>
-              <p className="cycle">
-                Cycle: {task.cycle || "TBD"}
-              </p>
+          {tasks.map((task) => (
+            <div
+              key={task.id}
+              className="task-item"
+              onClick={() => handleEditTask(task)}
+            >
+              <div className="task-header">
+                <strong>{task.title}</strong>
+                <p className="due-date">
+                  Due:{" "}
+                  {task.dueDate
+                    ? new Date(task.dueDate).toLocaleDateString()
+                    : "TBD"}
+                </p>
+                <p className="cycle">Cycle: {task.cycle || "TBD"}</p>
+              </div>
+
+              <p>{task.description || "No description"}</p>
+              <p>Type: {task.type || "TBD"}</p>
+              <p>Status: {task.status || "TBD"}</p>
+              <p>Priority: {task.priority || "TBD"}</p>
             </div>
+          ))}
 
-            
-            <p>{task.description || "No description"}</p>
-            <p>Type: {task.type || "TBD"}</p>
-            <p>Status: {task.status || "TBD"}</p>
-            <p>Priority: {task.priority || "TBD"}</p>
+          <div className="input-group">
+            <input
+              type="text"
+              placeholder="New Personal Task"
+              value={newTask}
+              onChange={(e) => setNewTask(e.target.value)}
+              className="input-field"
+            />
+            <button className="btn btn-primary" onClick={handleAddTask}>
+              Add
+            </button>
           </div>
-        ))}
 
-        <div className="input-group">
-          <input
-            type="text"
-            placeholder="New Personal Task"
-            value={newTask}
-            onChange={(e) => setNewTask(e.target.value)}
-            className="input-field"
-          />
-          <button className="btn btn-primary" onClick={handleAddTask}>
-            Add
-          </button>
+          {selectedTask && (
+            <TaskDetail
+              task={selectedTask.task}
+              teamId={null}
+              onClose={() => setSelectedTask(null)}
+              onSave={() => {
+                setSelectedTask(null);
+                fetchTasks(); // Refresh after editing
+              }}
+            />
+          )}
         </div>
-
-        {selectedTask && (
-          <TaskDetail
-            task={selectedTask.task}
-            teamId={null}
-            onClose={() => setSelectedTask(null)}
-            onSave={() => {
-              setSelectedTask(null);
-              fetchTasks(); // Refresh after editing
-            }}
-          />
-        )}
       </div>
     </div>
   );
 }
 
 export default MyTasks;
-

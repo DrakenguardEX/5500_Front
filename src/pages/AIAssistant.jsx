@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./AIAssistant.css";
+import TopBar from "../components/TopBar";
 
 function AIAssistant() {
   const [messages, setMessages] = useState([]);
@@ -47,42 +48,47 @@ function AIAssistant() {
   };
 
   return (
-    <div className="ai-assistant-container">
-      <h2>🤖 AI Assistant</h2>
+    <div>
+      <TopBar />
+      <div className="dashboard-wrapper">
+        <div className="dashboard-container centered">
+          <h2 className="dashboard-header">🤖 AI Assistant</h2>
 
-      <div className="controls">
-        <button className="btn btn-primary" onClick={handleGeneratePlan}>
-          Generate Task Plan
-        </button>
+          <div className="controls">
+            <button className="btn btn-primary" onClick={handleGeneratePlan}>
+              Generate Task Plan
+            </button>
 
-        <div className="guidance-section">
-          <input
-            className="task-id-input"
-            placeholder="Enter Task Name"
-            value={taskId}
-            onChange={(e) => setTaskId(e.target.value)}
-          />
-          <button className="btn btn-secondary" onClick={handleGetGuidance}>
-            Get Task Guidance
-          </button>
-        </div>
-      </div>
-
-      {isLoading && (
-        <div className="loading-spinner-container">
-          <div className="loading-spinner"></div>
-        </div>
-      )}
-
-      <div className="chat-box">
-        {messages.map((msg, idx) => (
-          <div key={idx} className="assistant-bubble">
-            <strong>
-              {msg.type === "plan" ? "🗓️ Task Plan" : "🛠️ Task Guidance"}:
-            </strong>
-            <div>{msg.text}</div>
+            <div className="guidance-section">
+              <input
+                className="task-id-input input-field"
+                placeholder="Enter Task Name"
+                value={taskId}
+                onChange={(e) => setTaskId(e.target.value)}
+              />
+              <button className="btn btn-secondary" onClick={handleGetGuidance}>
+                Get Task Guidance
+              </button>
+            </div>
           </div>
-        ))}
+
+          {isLoading && (
+            <div className="loading-spinner-container">
+              <div className="loading-spinner"></div>
+            </div>
+          )}
+
+          <div className="chat-box">
+            {messages.map((msg, idx) => (
+              <div key={idx} className="assistant-bubble">
+                <strong>
+                  {msg.type === "plan" ? "🗓️ Task Plan" : "🛠️ Task Guidance"}:
+                </strong>
+                <div>{msg.text}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

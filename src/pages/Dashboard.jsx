@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import TaskDetail from "../components/TaskDetail";
 import "./Dashboard.css";
+import TopBar from "../components/TopBar";
 
 function Dashboard() {
   const [teams, setTeams] = useState([]);
@@ -119,21 +120,8 @@ function Dashboard() {
 
   return (
     <div>
-      <div className="top-bar">
-        <button
-          className="btn btn-secondary"
-          onClick={() => (window.location.href = "/my-tasks")}
-        >
-          Go to My Tasks
-        </button>
-        <button
-          className="btn btn-success"
-          onClick={() => (window.location.href = "/ai-assistant")}
-          style={{ marginLeft: "10px" }}
-        >
-          AI Assistant
-        </button>
-      </div>
+      <TopBar />
+
       <div className="dashboard-wrapper">
         <div className="dashboard-container centered">
           <h2 className="dashboard-header">Task Management</h2>
@@ -185,7 +173,7 @@ function Dashboard() {
                     <div className="input-group">
                       <input
                         type="text"
-                        placeholder="User ID to add"
+                        placeholder="User Name to add"
                         value={memberToAdd[team._id] || ""}
                         onChange={(e) =>
                           setMemberToAdd({

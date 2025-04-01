@@ -16,6 +16,7 @@ function App() {
         <Route path="/team" element={<Team />} />
         <Route path="/my-tasks" element={<MyTasks />} />
         <Route path="/ai-assistant" element={<AIAssistant />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
