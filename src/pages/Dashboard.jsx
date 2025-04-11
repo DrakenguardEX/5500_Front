@@ -45,7 +45,7 @@ function Dashboard() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-User-Id": userId, // ✅ 添加这个
+          "X-User-Id": userId,
         },
         body: JSON.stringify({ name: newTeamName }),
       });
@@ -64,7 +64,7 @@ function Dashboard() {
   };
 
   const handleAddMember = async (teamId) => {
-    const usernameToAdd = memberToAdd[teamId]; // ✅ 正确取值！
+    const usernameToAdd = memberToAdd[teamId];
 
     if (!usernameToAdd) {
       return alert("Enter a username to add.");
@@ -74,7 +74,7 @@ function Dashboard() {
       const response = await fetch(`/api/teams/${teamId}/members`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: usernameToAdd }), // ✅ 使用正确变量名
+        body: JSON.stringify({ username: usernameToAdd }),
       });
 
       const data = await response.json();
@@ -99,7 +99,6 @@ function Dashboard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: newTaskTitle,
-          simple_description: "Simple default description",
         }),
       });
       if (response.ok) {
@@ -162,7 +161,13 @@ function Dashboard() {
                           onClick={() => handleEditTask(team._id, task)}
                         >
                           <strong>{task.title}</strong>
-                          <p>{task.simple_description || "No description"}</p>
+                          <p>Status: {task.status || "N/A"}</p>
+                          <p>
+                            Due:{" "}
+                            {task.dueDate
+                              ? new Date(task.dueDate).toLocaleDateString()
+                              : "N/A"}
+                          </p>
                         </div>
                       ))
                     ) : (

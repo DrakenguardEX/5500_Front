@@ -4,14 +4,14 @@
   align-items: center;
   justify-content: flex-start;
   height: 100vh;
-  width: 100vw; /* 让页面铺满整个窗口 */
+  width: 100vw;
   background-color: #f4f4f4;
   padding: 20px;
   box-sizing: border-box;
 }
 
 .dashboard-container {
-  width: 95%; /* 适配不同屏幕 */
+  width: 95%; /* fitting different size of screen */
   max-width: 1400px;
   background: white;
   padding: 20px;
@@ -33,7 +33,7 @@
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 三列布局 */
   gap: 20px;
   width: 100%;
-  justify-content: center; /* 确保整体居中 */
+  justify-content: center;
   align-items: start;
 }
 
@@ -41,8 +41,8 @@
   background: #ffffff;
   border-radius: 8px;
   padding: 16px;
-  /* width: calc(33.33% - 20px);  让卡片自适应3列布局 */
-  min-width: 300px; /* 设置最小宽度，避免过窄 */
+  /* width: calc(33.33% - 20px);  making cards fit 3 columns */
+  min-width: 300px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease-in-out;
 }
@@ -58,7 +58,7 @@
 
 @media (max-width: 768px) {
   .team-card {
-    grid-template-columns: repeat(1, minmax(300px, 1fr)); /* 768px以下变1列 */
+    grid-template-columns: repeat(1, minmax(300px, 1fr));
   }
 }
 
