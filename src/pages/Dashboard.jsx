@@ -113,8 +113,20 @@ function Dashboard() {
     }
   };
 
-  const handleEditTask = (teamId, task) => {
-    setSelectedTask({ teamId, task });
+  const handleEditTask = async (teamId, task) => {
+    try {
+      const response = await fetch(`/api/tasks/${task.id}`);
+      const data = await response.json();
+  
+      if (response.ok) {
+        console.log("Fetched Full Task Detail:", data);
+        setSelectedTask({ teamId, task: data });
+      } else {
+        alert("Failed to fetch task details");
+      }
+    } catch (err) {
+      console.error("Fetch task detail error:", err);
+    }
   };
 
   return (
