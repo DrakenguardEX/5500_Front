@@ -23,7 +23,7 @@ function TaskDetail({ task, teamId, onClose, onSave }) {
           type,
           priority,
           cycle,
-          dueDate     
+          dueDate,
         }),
       });
 
@@ -35,6 +35,31 @@ function TaskDetail({ task, teamId, onClose, onSave }) {
       }
     } catch (err) {
       console.error("Error updating task:", err);
+    }
+  };
+
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this task?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`/api/teams/${teamId}/tasks/${task.id}`, {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("Task deleted!");
+        onSave(); // Refresh parent
+        onClose(); // Close modal
+      } else {
+        alert("Failed to delete task: " + result.message);
+      }
+    } catch (err) {
+      console.error("Delete task error:", err);
     }
   };
 
@@ -81,7 +106,6 @@ function TaskDetail({ task, teamId, onClose, onSave }) {
           <option value="Low">Low</option>
         </select>
 
-        
         <label>Cycle</label>
         <select value={cycle} onChange={(e) => setCycle(e.target.value)}>
           <option value="Daily">Daily</option>
@@ -89,7 +113,6 @@ function TaskDetail({ task, teamId, onClose, onSave }) {
           <option value="Monthly">Monthly</option>
         </select>
 
-        
         <label>Due Date</label>
         <input
           type="date"
@@ -103,6 +126,9 @@ function TaskDetail({ task, teamId, onClose, onSave }) {
           </button>
           <button className="cancel-btn" onClick={onClose}>
             Cancel
+          </button>
+          <button className="btn btn-danger btn-sm" onClick={handleDelete}>
+            Delete
           </button>
         </div>
       </div>

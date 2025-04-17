@@ -98,15 +98,20 @@ function Dashboard() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: newTaskTitle,
+          title: newTaskTitle.trim(),
         }),
       });
+
+      const result = await response.json();
+
       if (response.ok) {
         alert("Task added!");
         setNewTaskTitle("");
         fetchTeams();
+      } else if (response.status === 409) {
+        alert("A task with this name already exists in the system.");
       } else {
-        alert("Failed to add task.");
+        alert("Failed to add task: " + result.message);
       }
     } catch (err) {
       console.error("Add task error:", err);
@@ -117,7 +122,7 @@ function Dashboard() {
     try {
       const response = await fetch(`/api/tasks/${task.id}`);
       const data = await response.json();
-  
+
       if (response.ok) {
         console.log("Fetched Full Task Detail:", data);
         setSelectedTask({ teamId, task: data });
