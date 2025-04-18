@@ -1,38 +1,19 @@
-import { useNavigate } from "react-router-dom";
 import "./TopBar.css";
 
-function TopBar() {
-  const navigate = useNavigate();
-
-  const handleSignOut = () => {
-    console.log("Signing out...");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("token");
-    navigate("/login"); // this will trigger React Router
-  };
-
+function TopBar({ onMyTasks, onTeamTasks, onAssistant, onSignOut }) {
   return (
     <div className="top-bar">
       <div className="toolbar-buttons">
-        <button
-          className="btn btn-secondary"
-          onClick={() => navigate("/my-tasks")}
-        >
+        <button className="btn btn-secondary" onClick={onMyTasks}>
           Go to My Tasks
         </button>
-        <button
-          className="btn btn-success"
-          onClick={() => navigate("/ai-assistant")}
-        >
+        <button className="btn btn-success" onClick={onAssistant}>
           AI Assistant
         </button>
-        <button
-          className="btn btn-secondary"
-          onClick={() => navigate("/dashboard")}
-        >
+        <button className="btn btn-secondary" onClick={onTeamTasks}>
           Go to Team Tasks
         </button>
-        <button className="btn btn-danger" onClick={handleSignOut}>
+        <button className="btn btn-danger" onClick={onSignOut}>
           Sign Out
         </button>
       </div>

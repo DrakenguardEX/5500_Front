@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./AIAssistant.css";
-import TopBar from "../components/TopBar";
+
 
 function AIAssistant() {
   const [messages, setMessages] = useState([]);
@@ -48,46 +48,37 @@ function AIAssistant() {
   };
 
   return (
-    <div>
-      <TopBar />
-      <div className="dashboard-wrapper">
-        <div className="dashboard-container centered">
-          <h2 className="dashboard-header">🤖 AI Assistant</h2>
+    <div className="ai-page">
+      <div className="ai-content">
+        <h2 className="ai-header">
+          AI Assistant <span className="ai-sub">powered by ChatGPT 3.5Turbo</span>
+        </h2>
 
-          <div className="controls">
-            <button className="btn btn-primary" onClick={handleGeneratePlan}>
-              Generate Task Plan
-            </button>
+        <button className="ai-primary-btn" onClick={handleGeneratePlan}>
+          Generate Task Plan
+        </button>
 
-            <div className="guidance-section">
-              <input
-                className="task-id-input input-field"
-                placeholder="Enter Task Name"
-                value={taskId}
-                onChange={(e) => setTaskId(e.target.value)}
-              />
-              <button className="btn btn-secondary" onClick={handleGetGuidance}>
-                Get Task Guidance
-              </button>
+        <div className="ai-input-row">
+          <input
+            className="ai-input"
+            placeholder="Enter Task Name"
+            value={taskId}
+            onChange={(e) => setTaskId(e.target.value)}
+          />
+          <button className="ai-secondary-btn" onClick={handleGetGuidance}>
+            Get Task Guidance
+          </button>
+        </div>
+
+        <div className="ai-chat-box">
+          {messages.map((msg, idx) => (
+            <div key={idx} className="ai-message">
+              <strong>
+                {msg.type === "plan" ? "Task Plan" : "Task Guidance"}:
+              </strong>
+              <div>{msg.text}</div>
             </div>
-          </div>
-
-          {isLoading && (
-            <div className="loading-spinner-container">
-              <div className="loading-spinner"></div>
-            </div>
-          )}
-
-          <div className="chat-box">
-            {messages.map((msg, idx) => (
-              <div key={idx} className="assistant-bubble">
-                <strong>
-                  {msg.type === "plan" ? "🗓️ Task Plan" : "🛠️ Task Guidance"}:
-                </strong>
-                <div>{msg.text}</div>
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
       </div>
     </div>
@@ -95,3 +86,8 @@ function AIAssistant() {
 }
 
 export default AIAssistant;
+
+
+
+
+

@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import TaskDetail from "../components/TaskDetail";
-import "./Dashboard.css";
 import TopBar from "../components/TopBar";
+import MyTasks from "./MyTasks";
+import AIAssistant from "./AIAssistant";
+import "./Dashboard.css";
 
 function Dashboard() {
   const [teams, setTeams] = useState([]);
@@ -10,18 +12,15 @@ function Dashboard() {
   const [newTeamName, setNewTeamName] = useState("");
   const [selectedTask, setSelectedTask] = useState(null);
   const [memberToAdd, setMemberToAdd] = useState({});
+  const [activeView, setActiveView] = useState("personal");
 
   const userId = localStorage.getItem("userId");
 
   const fetchTeams = async () => {
-    const userId = localStorage.getItem("userId");
     if (!userId) return alert("User not logged in");
-
     try {
       const response = await fetch("/api/teams/", {
-        headers: {
-          "X-User-Id": userId,
-        },
+        headers: { "X-User-Id": userId },
       });
       const data = await response.json();
       setTeams(data);
@@ -36,8 +35,6 @@ function Dashboard() {
 
   const handleAddTeam = async () => {
     if (!newTeamName.trim()) return alert("Team name is required.");
-
-    const userId = localStorage.getItem("userId");
     if (!userId) return alert("User not logged in");
 
     try {
@@ -65,11 +62,7 @@ function Dashboard() {
 
   const handleAddMember = async (teamId) => {
     const usernameToAdd = memberToAdd[teamId];
-
-    if (!usernameToAdd) {
-      return alert("Enter a username to add.");
-    }
-
+    if (!usernameToAdd) return alert("Enter a username to add.");
     try {
       const response = await fetch(`/api/teams/${teamId}/members`, {
         method: "POST",
@@ -78,7 +71,6 @@ function Dashboard() {
       });
 
       const data = await response.json();
-
       if (response.ok) {
         alert("Member added!");
         setMemberToAdd({ ...memberToAdd, [teamId]: "" });
@@ -97,9 +89,7 @@ function Dashboard() {
       const response = await fetch(`/api/teams/${teamId}/tasks`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: newTaskTitle.trim(),
-        }),
+        body: JSON.stringify({ title: newTaskTitle.trim() }),
       });
 
       const result = await response.json();
@@ -122,9 +112,7 @@ function Dashboard() {
     try {
       const response = await fetch(`/api/tasks/${task.id}`);
       const data = await response.json();
-
       if (response.ok) {
-        console.log("Fetched Full Task Detail:", data);
         setSelectedTask({ teamId, task: data });
       } else {
         alert("Failed to fetch task details");
@@ -136,103 +124,132 @@ function Dashboard() {
 
   return (
     <div>
-      <TopBar />
+      <TopBar
+        onMyTasks={() => setActiveView("personal")}
+        onTeamTasks={() => setActiveView("team")}
+        onAssistant={() => setActiveView("ai")}
+      />
 
       <div className="dashboard-wrapper">
         <div className="dashboard-container centered">
-          <h2 className="dashboard-header">Task Management</h2>
-          <div className="input-group">
-            <input
-              type="text"
-              placeholder="New Team Name"
-              value={newTeamName}
-              onChange={(e) => setNewTeamName(e.target.value)}
-              className="input-field"
-            />
-            <button className="btn btn-primary" onClick={handleAddTeam}>
-              Add Team
-            </button>
-          </div>
+          {activeView === "personal" && (
+            <>
+              <h2 className="dashboard-header">My Personal Tasks</h2>
+              <MyTasks />
+            </>
+          )}
 
-          <div className="team-grid aligned-grid">
-            {teams.map((team) => (
-              <div key={team._id} className="team-card">
-                <h3
-                  className="team-title"
-                  onClick={() =>
-                    setExpandedTeamId(
-                      expandedTeamId === team._id ? null : team._id
-                    )
-                  }
-                >
-                  {team.name} {expandedTeamId === team._id ? "▲" : "▼"}
-                </h3>
+          {activeView === "ai" && (
+            <>
+              <AIAssistant />
+            </>
+          )}
 
-                {expandedTeamId === team._id && (
-                  <div className="task-list">
-                    {team.tasks && team.tasks.length > 0 ? (
-                      team.tasks.map((task) => (
-                        <div
-                          key={task.id}
-                          className="task-item"
-                          onClick={() => handleEditTask(team._id, task)}
-                        >
-                          <strong>{task.title}</strong>
-                          <p>Status: {task.status || "N/A"}</p>
-                          <p>
-                            Due:{" "}
-                            {task.dueDate
-                              ? new Date(task.dueDate).toLocaleDateString()
-                              : "N/A"}
-                          </p>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="no-tasks">No tasks available.</p>
-                    )}
+          {activeView === "team" && (
+            <>
+              <h2 className="dashboard-header">Team Task Management</h2>
 
-                    {/* Add Member to Team */}
-                    <div className="input-group">
-                      <input
-                        type="text"
-                        placeholder="User Name to add"
-                        value={memberToAdd[team._id] || ""}
-                        onChange={(e) =>
-                          setMemberToAdd({
-                            ...memberToAdd,
-                            [team._id]: e.target.value,
-                          })
-                        }
-                        className="input-field"
-                      />
-                      <button
-                        className="btn btn-secondary"
-                        onClick={() => handleAddMember(team._id)}
-                      >
-                        Add Member
-                      </button>
-                    </div>
-
-                    <div className="input-group">
-                      <input
-                        type="text"
-                        placeholder="New Task Title"
-                        value={newTaskTitle}
-                        onChange={(e) => setNewTaskTitle(e.target.value)}
-                        className="input-field"
-                      />
-                      <button
-                        className="btn btn-primary"
-                        onClick={() => handleAddTask(team._id)}
-                      >
-                        Add Task
-                      </button>
-                    </div>
-                  </div>
-                )}
+              <div className="input-group">
+                <input
+                  type="text"
+                  placeholder="New Team Name"
+                  value={newTeamName}
+                  onChange={(e) => setNewTeamName(e.target.value)}
+                  className="input-field"
+                />
+                <button className="btn btn-primary" onClick={handleAddTeam}>
+                  Add Team
+                </button>
               </div>
-            ))}
-          </div>
+
+              <div className="team-grid aligned-grid">
+                {teams.map((team) => (
+                  <div key={team._id} className="team-card">
+                    <h3
+                      className="team-title"
+                      onClick={() =>
+                        setExpandedTeamId(
+                          expandedTeamId === team._id ? null : team._id
+                        )
+                      }
+                    >
+                      {team.name} {expandedTeamId === team._id ? "▲" : "▼"}
+                    </h3>
+
+                    {expandedTeamId === team._id && (
+                      <div className="team-task-container">
+                        <div className="team-task-list">
+                          {team.tasks && team.tasks.length > 0 ? (
+                            team.tasks.map((task) => (
+                              <div
+                                key={task.id}
+                                className="team-task-item"
+                                onClick={() =>
+                                  handleEditTask(team._id, task)
+                                }
+                              >
+                                <strong>{task.title}</strong>
+                                <p>Status: {task.status || "N/A"}</p>
+                                <p>
+                                  Due:{" "}
+                                  {task.dueDate
+                                    ? new Date(
+                                        task.dueDate
+                                      ).toLocaleDateString()
+                                    : "N/A"}
+                                </p>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="no-tasks">No tasks available.</p>
+                          )}
+                        </div>
+
+                        <div className="team-task-controls">
+                          <input
+                            type="text"
+                            placeholder="User Name to add"
+                            value={memberToAdd[team._id] || ""}
+                            onChange={(e) =>
+                              setMemberToAdd({
+                                ...memberToAdd,
+                                [team._id]: e.target.value,
+                              })
+                            }
+                            className="input-field"
+                          />
+                          <button
+                            className="btn btn-secondary"
+                            onClick={() => handleAddMember(team._id)}
+                          >
+                            Add Member
+                          </button>
+                        </div>
+
+                        <div className="team-task-controls">
+                          <input
+                            type="text"
+                            placeholder="New Task Title"
+                            value={newTaskTitle}
+                            onChange={(e) =>
+                              setNewTaskTitle(e.target.value)
+                            }
+                            className="input-field"
+                          />
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => handleAddTask(team._id)}
+                          >
+                            Add Task
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
 
           {selectedTask && (
             <TaskDetail
@@ -252,3 +269,6 @@ function Dashboard() {
 }
 
 export default Dashboard;
+
+
+

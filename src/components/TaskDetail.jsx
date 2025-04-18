@@ -4,12 +4,13 @@ import "./TaskDetail.css";
 function TaskDetail({ task, teamId, onClose, onSave }) {
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description || "");
-  const [status, setStatus] = useState(task.status || "TBD");
-  const [type, setType] = useState(task.type || "TBD");
-  const [priority, setPriority] = useState(task.priority || "TBD");
-
+  const [status, setStatus] = useState(task.status || "Pending");
+  const [type, setType] = useState(task.type || "Uncategorized");
+  const [priority, setPriority] = useState(task.priority || "Medium");
   const [cycle, setCycle] = useState(task.cycle || "Daily");
-  const [dueDate, setDueDate] = useState(task.dueDate || "");
+  const [dueDate, setDueDate] = useState(
+    task.dueDate ? task.dueDate.substring(0, 10) : ""
+  );
 
   const handleSave = async () => {
     try {
@@ -29,7 +30,7 @@ function TaskDetail({ task, teamId, onClose, onSave }) {
 
       if (response.ok) {
         alert("Task updated successfully!");
-        onSave(); // Notify parent to refresh
+        onSave();
       } else {
         alert("Failed to update task.");
       }
@@ -39,22 +40,21 @@ function TaskDetail({ task, teamId, onClose, onSave }) {
   };
 
   const handleDelete = async () => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this task?"
-    );
-    if (!confirmDelete) return;
+    const confirm = window.confirm("Are you sure you want to delete this task?");
+    if (!confirm) return;
+
+    const url = teamId
+      ? `/api/teams/${teamId}/tasks/${task.id}`
+      : `/api/tasks/${task.id}`;
 
     try {
-      const response = await fetch(`/api/teams/${teamId}/tasks/${task.id}`, {
-        method: "DELETE",
-      });
-
+      const response = await fetch(url, { method: "DELETE" });
       const result = await response.json();
 
       if (response.ok) {
         alert("Task deleted!");
-        onSave(); // Refresh parent
-        onClose(); // Close modal
+        onSave();
+        onClose();
       } else {
         alert("Failed to delete task: " + result.message);
       }
@@ -68,7 +68,7 @@ function TaskDetail({ task, teamId, onClose, onSave }) {
       <div className="task-detail-container">
         <h3>Edit Task</h3>
 
-        <label>Task Title</label>
+        <label>Title</label>
         <input
           type="text"
           value={title}
@@ -121,15 +121,9 @@ function TaskDetail({ task, teamId, onClose, onSave }) {
         />
 
         <div className="button-group">
-          <button className="save-btn" onClick={handleSave}>
-            Save
-          </button>
-          <button className="cancel-btn" onClick={onClose}>
-            Cancel
-          </button>
-          <button className="btn btn-danger btn-sm" onClick={handleDelete}>
-            Delete
-          </button>
+          <button className="save-btn" onClick={handleSave}>Save</button>
+          <button className="cancel-btn" onClick={onClose}>Cancel</button>
+          <button className="btn btn-danger" onClick={handleDelete}>Delete</button>
         </div>
       </div>
     </div>
@@ -137,3 +131,4 @@ function TaskDetail({ task, teamId, onClose, onSave }) {
 }
 
 export default TaskDetail;
+

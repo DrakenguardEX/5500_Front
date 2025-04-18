@@ -8,41 +8,49 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 999;
 }
 
 .task-detail-container {
-  background: white;
-  padding: 25px;
+  background: #fff;
+  padding: 28px 32px;
   border-radius: 12px;
-  width: 420px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-  text-align: center;
+  width: 460px;
+  max-width: 90%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  text-align: left;
+  font-family: "Segoe UI", sans-serif;
 }
 
 h3 {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
 }
 
 label {
   display: block;
-  font-weight: bold;
-  text-align: left;
-  margin-top: 12px;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
 }
 
 input,
 textarea,
 select {
   width: 100%;
-  padding: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
   border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: border 0.2s ease-in-out;
+  border-radius: 6px;
+  transition: border-color 0.3s ease;
   box-sizing: border-box;
 }
 
@@ -51,7 +59,7 @@ textarea:focus,
 select:focus {
   border-color: #007bff;
   outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
 }
 
 textarea {
@@ -61,32 +69,53 @@ textarea {
 
 .button-group {
   display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.save-btn,
+.cancel-btn,
+.btn-danger {
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 .save-btn {
-  background-color: #28a745;
+  background-color: #007bff;
   color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
 }
 
 .save-btn:hover {
-  background-color: #218838;
+  background-color: #0056b3;
 }
 
 .cancel-btn {
-  background-color: #dc3545;
+  background-color: #6c757d;
   color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
 }
 
 .cancel-btn:hover {
-  background-color: #c82333;
+  background-color: #5a6268;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #b52a3a;
+}
+
+
+.due-preview {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 6px;
+  margin-top: -2px;
 }
