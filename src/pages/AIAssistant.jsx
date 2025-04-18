@@ -1,7 +1,6 @@
 import { useState } from "react";
 import "./AIAssistant.css";
 
-
 function AIAssistant() {
   const [messages, setMessages] = useState([]);
   const [taskId, setTaskId] = useState("");
@@ -17,10 +16,7 @@ function AIAssistant() {
         body: JSON.stringify({ user_id: userId }),
       });
       const data = await response.json();
-      setMessages((prev) => [
-        ...prev,
-        { sender: "assistant", type: "plan", text: data.plan },
-      ]);
+      setMessages([{ sender: "assistant", type: "plan", text: data.plan }]);
     } catch (err) {
       alert("Error fetching task plan");
       console.error(err);
@@ -35,8 +31,7 @@ function AIAssistant() {
     try {
       const response = await fetch(`/api/ai/guidance/${taskId}`);
       const data = await response.json();
-      setMessages((prev) => [
-        ...prev,
+      setMessages([
         { sender: "assistant", type: "guidance", text: data.guidance },
       ]);
     } catch (err) {
@@ -51,12 +46,26 @@ function AIAssistant() {
     <div className="ai-page">
       <div className="ai-content">
         <h2 className="ai-header">
-          AI Assistant <span className="ai-sub">powered by ChatGPT 3.5Turbo</span>
+          AI Assistant{" "}
+          <span className="ai-sub">powered by ChatGPT 3.5Turbo</span>
         </h2>
 
-        <button className="ai-primary-btn" onClick={handleGeneratePlan}>
-          Generate Task Plan
-        </button>
+        <div className="ai-btn-row">
+          <button
+            className="ai-primary-btn"
+            onClick={handleGeneratePlan}
+            disabled={isLoading}
+          >
+            {isLoading ? "Generating..." : "Generate Task Plan"}
+          </button>
+          <button
+            className="ai-clear-btn"
+            onClick={() => setMessages([])}
+            disabled={isLoading}
+          >
+            Clear
+          </button>
+        </div>
 
         <div className="ai-input-row">
           <input
@@ -65,20 +74,28 @@ function AIAssistant() {
             value={taskId}
             onChange={(e) => setTaskId(e.target.value)}
           />
-          <button className="ai-secondary-btn" onClick={handleGetGuidance}>
-            Get Task Guidance
+          <button
+            className="ai-secondary-btn"
+            onClick={handleGetGuidance}
+            disabled={isLoading}
+          >
+            {isLoading ? "Loading..." : "Get Task Guidance"}
           </button>
         </div>
 
         <div className="ai-chat-box">
-          {messages.map((msg, idx) => (
-            <div key={idx} className="ai-message">
-              <strong>
-                {msg.type === "plan" ? "Task Plan" : "Task Guidance"}:
+          {isLoading && <div className="ai-loading">⏳ Thinking...</div>}
+          {!isLoading && messages.length > 0 && (
+            <div className="ai-message">
+              <strong className="ai-message-title">
+                {messages[0].type === "plan"
+                  ? "📝 Task Plan"
+                  : "💡 Task Guidance"}
+                :
               </strong>
-              <div>{msg.text}</div>
+              <pre className="ai-message-content">{messages[0].text}</pre>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>
@@ -86,8 +103,3 @@ function AIAssistant() {
 }
 
 export default AIAssistant;
-
-
-
-
-
