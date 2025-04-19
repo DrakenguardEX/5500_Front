@@ -1,6 +1,6 @@
 import "./TopBar.css";
 
-function TopBar({ onMyTasks, onTeamTasks, onAssistant, onSignOut }) {
+function TopBar({ onMyTasks, onTeamTasks, onAssistant, onLogout }) {
   return (
     <div className="top-bar">
       <div className="toolbar-buttons">
@@ -13,7 +13,7 @@ function TopBar({ onMyTasks, onTeamTasks, onAssistant, onSignOut }) {
         <button className="btn btn-secondary" onClick={onTeamTasks}>
           Go to Team Tasks
         </button>
-        <button className="btn btn-danger" onClick={onSignOut}>
+        <button className="btn btn-danger" onClick={onLogout}>
           Sign Out
         </button>
       </div>

@@ -4,6 +4,7 @@ import TopBar from "../components/TopBar";
 import MyTasks from "./MyTasks";
 import AIAssistant from "./AIAssistant";
 import "./Dashboard.css";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
   const [teams, setTeams] = useState([]);
@@ -13,6 +14,7 @@ function Dashboard() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [memberToAdd, setMemberToAdd] = useState({});
   const [activeView, setActiveView] = useState("personal");
+  const navigate = useNavigate();
 
   const userId = localStorage.getItem("userId");
 
@@ -122,12 +124,29 @@ function Dashboard() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/users/logout", {
+        method: "POST",
+      });
+    } catch (err) {
+      console.error("Logout request failed:", err);
+    }
+
+    // Clear local storage and redirect
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    alert("Logged out successfully.");
+    navigate("/login");
+  };
+
   return (
     <div>
       <TopBar
         onMyTasks={() => setActiveView("personal")}
         onTeamTasks={() => setActiveView("team")}
         onAssistant={() => setActiveView("ai")}
+        onLogout={handleLogout}
       />
 
       <div className="dashboard-wrapper">
@@ -184,9 +203,7 @@ function Dashboard() {
                               <div
                                 key={task.id}
                                 className="team-task-item"
-                                onClick={() =>
-                                  handleEditTask(team._id, task)
-                                }
+                                onClick={() => handleEditTask(team._id, task)}
                               >
                                 <strong>{task.title}</strong>
                                 <p>Status: {task.status || "N/A"}</p>
@@ -231,9 +248,7 @@ function Dashboard() {
                             type="text"
                             placeholder="New Task Title"
                             value={newTaskTitle}
-                            onChange={(e) =>
-                              setNewTaskTitle(e.target.value)
-                            }
+                            onChange={(e) => setNewTaskTitle(e.target.value)}
                             className="input-field"
                           />
                           <button
@@ -269,6 +284,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
-
-
-
