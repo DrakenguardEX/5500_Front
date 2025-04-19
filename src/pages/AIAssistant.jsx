@@ -7,10 +7,13 @@ function AIAssistant() {
   const [isLoading, setIsLoading] = useState(false);
   const userId = localStorage.getItem("userId");
 
+  const baseURL = import.meta.env.DEV ? "" : import.meta.env.VITE_BACKEND_URL;
+
   const handleGeneratePlan = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/ai/plan", {
+      
+      const response = await fetch(`${baseURL}/api/ai/plan`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_id: userId }),
@@ -29,7 +32,7 @@ function AIAssistant() {
     if (!taskId.trim()) return alert("Please enter a task name.");
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/ai/guidance/${taskId}`);
+      const response = await fetch(`${baseURL}/api/ai/guidance/${taskId}`);
       const data = await response.json();
       setMessages([
         { sender: "assistant", type: "guidance", text: data.guidance },

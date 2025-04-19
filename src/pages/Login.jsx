@@ -8,9 +8,11 @@ function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const baseURL = import.meta.env.DEV ? "" : import.meta.env.VITE_BACKEND_URL;
+
   const handleLogin = async () => {
     try {
-      const response = await fetch("/api/users/login", {
+      const response = await fetch(`${baseURL}/api/users/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),

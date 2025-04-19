@@ -28,9 +28,11 @@ function MyTasks() {
 
   const userId = localStorage.getItem("userId");
 
+  const baseURL = import.meta.env.DEV ? "" : import.meta.env.VITE_BACKEND_URL;
+
   const fetchTasks = async () => {
     try {
-      const res = await fetch(`/api/tasks/user/${userId}`);
+      const res = await fetch(`${baseURL}/api/tasks/user/${userId}`);
       const data = await res.json();
       setTasks(data);
     } catch (err) {
@@ -82,7 +84,7 @@ function MyTasks() {
   const handleAddTask = async () => {
     if (!newTask.trim()) return;
     try {
-      await fetch(`/api/tasks/user/${userId}`, {
+      await fetch(`${baseURL}/api/tasks/user/${userId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: newTask }),

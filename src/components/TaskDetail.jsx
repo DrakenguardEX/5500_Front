@@ -12,9 +12,11 @@ function TaskDetail({ task, teamId, onClose, onSave }) {
     task.dueDate ? task.dueDate.substring(0, 10) : ""
   );
 
+  const baseURL = import.meta.env.DEV ? "" : import.meta.env.VITE_BACKEND_URL;
+
   const handleSave = async () => {
     try {
-      const response = await fetch(`/api/tasks/${task.id}`, {
+      const response = await fetch(`${baseURL}/api/tasks/${task.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -48,7 +50,7 @@ function TaskDetail({ task, teamId, onClose, onSave }) {
       : `/api/tasks/${task.id}`;
 
     try {
-      const response = await fetch(url, { method: "DELETE" });
+      const response = await fetch(`${baseURL}${url}`, { method: "DELETE" });
       const result = await response.json();
 
       if (response.ok) {

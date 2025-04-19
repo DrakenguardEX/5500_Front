@@ -18,10 +18,12 @@ function Dashboard() {
 
   const userId = localStorage.getItem("userId");
 
+  const baseURL = import.meta.env.DEV ? "" : import.meta.env.VITE_BACKEND_URL;
+
   const fetchTeams = async () => {
     if (!userId) return alert("User not logged in");
     try {
-      const response = await fetch("/api/teams/", {
+      const response = await fetch(`${baseURL}/api/teams/`, {
         headers: { "X-User-Id": userId },
       });
       const data = await response.json();
@@ -40,7 +42,7 @@ function Dashboard() {
     if (!userId) return alert("User not logged in");
 
     try {
-      const response = await fetch("/api/teams/", {
+      const response = await fetch(`${baseURL}/api/teams/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,7 +68,7 @@ function Dashboard() {
     const usernameToAdd = memberToAdd[teamId];
     if (!usernameToAdd) return alert("Enter a username to add.");
     try {
-      const response = await fetch(`/api/teams/${teamId}/members`, {
+      const response = await fetch(`${baseURL}/api/teams/${teamId}/members`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: usernameToAdd }),
@@ -88,7 +90,7 @@ function Dashboard() {
   const handleAddTask = async (teamId) => {
     if (!newTaskTitle.trim()) return alert("Task title is required.");
     try {
-      const response = await fetch(`/api/teams/${teamId}/tasks`, {
+      const response = await fetch(`${baseURL}/api/teams/${teamId}/tasks`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: newTaskTitle.trim() }),
@@ -112,7 +114,7 @@ function Dashboard() {
 
   const handleEditTask = async (teamId, task) => {
     try {
-      const response = await fetch(`/api/tasks/${task.id}`);
+      const response = await fetch(`${baseURL}/api/tasks/${task.id}`);
       const data = await response.json();
       if (response.ok) {
         setSelectedTask({ teamId, task: data });
@@ -126,7 +128,7 @@ function Dashboard() {
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/users/logout", {
+      await fetch(`${baseURL}/api/users/logout`, {
         method: "POST",
       });
     } catch (err) {
